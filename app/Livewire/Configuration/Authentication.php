@@ -58,6 +58,11 @@ class Authentication extends Component
                 'description' => __('Default role for new OAuth users: viewer, member, or admin.'),
             ],
             [
+                'env' => 'OAUTH_DEFAULT_ORGANIZATION_ID',
+                'value' => config('oauth.default_organization_id') ?: '-',
+                'description' => __('Organization ID for auto-created OAuth users (defaults to main org).'),
+            ],
+            [
                 'env' => 'OAUTH_AUTO_LINK_BY_EMAIL',
                 'value' => config('oauth.auto_link_by_email') ? 'true' : 'false',
                 'description' => __('Link OAuth logins to existing users with matching email.'),

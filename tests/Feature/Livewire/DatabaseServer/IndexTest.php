@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Jobs\ProcessBackupJob;
 use App\Livewire\DatabaseServer\Index;
 use App\Models\Backup;
@@ -13,7 +14,7 @@ beforeEach(function () {
 });
 
 test('runBackup triggers backup for a specific backup configuration', function () {
-    $user = User::factory()->create(['role' => User::ROLE_ADMIN]);
+    $user = User::factory()->create(['role' => UserRole::Admin]);
     $server = DatabaseServer::factory()->withoutBackups()->create();
     $backup = Backup::factory()->for($server)->selected(['test_db'])->create();
 
@@ -25,7 +26,7 @@ test('runBackup triggers backup for a specific backup configuration', function (
 });
 
 test('runBackup includes backup display label in success toast', function () {
-    $user = User::factory()->create(['role' => User::ROLE_ADMIN]);
+    $user = User::factory()->create(['role' => UserRole::Admin]);
     $server = DatabaseServer::factory()->withoutBackups()->create();
     $backup = Backup::factory()->for($server)->selected(['test_db'])->create();
 
@@ -38,7 +39,7 @@ test('runBackup includes backup display label in success toast', function () {
 });
 
 test('runBackup fails with authorization error if user is viewer', function () {
-    $user = User::factory()->create(['role' => User::ROLE_VIEWER]);
+    $user = User::factory()->create(['role' => UserRole::Viewer]);
     $server = DatabaseServer::factory()->withoutBackups()->create();
     $backup = Backup::factory()->for($server)->selected(['test_db'])->create();
 
