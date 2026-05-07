@@ -1,11 +1,12 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Livewire\Configuration\Application;
 use App\Models\User;
 use Livewire\Livewire;
 
 test('configuration route redirects to application tab', function () {
-    $user = User::factory()->create(['role' => 'admin']);
+    $user = User::factory()->create(['role' => UserRole::Admin]);
 
     $this->actingAs($user)
         ->get('/configuration')
@@ -13,7 +14,7 @@ test('configuration route redirects to application tab', function () {
 });
 
 test('application page displays environment variables', function () {
-    $user = User::factory()->create(['role' => 'admin']);
+    $user = User::factory()->create(['role' => UserRole::Admin]);
 
     Livewire::actingAs($user)
         ->test(Application::class)

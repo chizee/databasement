@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Facades\AppConfig;
 use App\Jobs\CleanupExpiredSnapshotsJob;
 use App\Jobs\ProcessBackupJob;
@@ -19,7 +20,7 @@ beforeEach(function () {
 });
 
 test('backup page displays current values', function () {
-    $user = User::factory()->create(['role' => 'admin']);
+    $user = User::factory()->create(['role' => UserRole::Admin]);
 
     Livewire::actingAs($user)
         ->test(Backup::class)
@@ -31,7 +32,7 @@ test('backup page displays current values', function () {
 });
 
 test('non-admin users see read-only backup page', function () {
-    $user = User::factory()->create(['role' => 'member']);
+    $user = User::factory()->create(['role' => UserRole::Member]);
 
     Livewire::actingAs($user)
         ->test(Backup::class)
@@ -40,14 +41,14 @@ test('non-admin users see read-only backup page', function () {
 });
 
 test('non-admin users cannot save backup config', function () {
-    Livewire::actingAs(User::factory()->create(['role' => 'member']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Member]))
         ->test(Backup::class)
         ->call('saveBackupConfig')
         ->assertForbidden();
 });
 
 test('saving backup config persists values', function () {
-    Livewire::actingAs(User::factory()->create(['role' => 'admin']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Admin]))
         ->test(Backup::class)
         ->set('form.compression', 'zstd')
         ->set('form.compression_level', 10)
@@ -65,7 +66,7 @@ test('shows warning toast when scheduler restart fails', function () {
 
     Process::fake(fn () => Process::result(errorOutput: 'connection refused', exitCode: 1));
 
-    Livewire::actingAs(User::factory()->create(['role' => 'admin']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Admin]))
         ->test(Backup::class)
         ->call('saveBackupConfig');
 
@@ -75,7 +76,7 @@ test('shows warning toast when scheduler restart fails', function () {
 });
 
 test('validation rejects invalid backup values', function () {
-    Livewire::actingAs(User::factory()->create(['role' => 'admin']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Admin]))
         ->test(Backup::class)
         ->set('form.compression', 'invalid')
         ->set('form.compression_level', 0)
@@ -88,7 +89,7 @@ test('validation rejects invalid backup values', function () {
 // Backup Schedule CRUD tests
 
 test('admin can create a backup schedule', function () {
-    Livewire::actingAs(User::factory()->create(['role' => 'admin']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Admin]))
         ->test(Backup::class)
         ->call('openScheduleModal')
         ->assertSet('showScheduleModal', true)
@@ -110,7 +111,7 @@ test('admin can edit a backup schedule', function () {
         'expression' => '0 1 * * *',
     ]);
 
-    Livewire::actingAs(User::factory()->create(['role' => 'admin']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Admin]))
         ->test(Backup::class)
         ->call('openScheduleModal', $schedule->id)
         ->assertSet('form.schedule_name', 'Old Name')
@@ -127,7 +128,7 @@ test('admin can edit a backup schedule', function () {
 test('admin can delete an unused backup schedule', function () {
     $schedule = BackupSchedule::factory()->create(['name' => 'To Delete']);
 
-    Livewire::actingAs(User::factory()->create(['role' => 'admin']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Admin]))
         ->test(Backup::class)
         ->call('confirmDeleteSchedule', $schedule->id)
         ->assertSet('showDeleteScheduleModal', true)
@@ -141,7 +142,7 @@ test('cannot delete a backup schedule that is in use', function () {
     $server = DatabaseServer::factory()->create();
     $schedule = $server->backups->first()->backupSchedule;
 
-    Livewire::actingAs(User::factory()->create(['role' => 'admin']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Admin]))
         ->test(Backup::class)
         ->call('confirmDeleteSchedule', $schedule->id)
         ->call('deleteSchedule');
@@ -150,7 +151,7 @@ test('cannot delete a backup schedule that is in use', function () {
 });
 
 test('schedule name must be unique', function () {
-    Livewire::actingAs(User::factory()->create(['role' => 'admin']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Admin]))
         ->test(Backup::class)
         ->call('openScheduleModal')
         ->set('form.schedule_name', 'Daily')
@@ -160,7 +161,7 @@ test('schedule name must be unique', function () {
 });
 
 test('schedule requires valid cron expression', function () {
-    Livewire::actingAs(User::factory()->create(['role' => 'admin']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Admin]))
         ->test(Backup::class)
         ->call('openScheduleModal')
         ->set('form.schedule_name', 'Bad Cron')
@@ -170,14 +171,14 @@ test('schedule requires valid cron expression', function () {
 });
 
 test('non-admin cannot create schedule', function () {
-    Livewire::actingAs(User::factory()->create(['role' => 'member']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Member]))
         ->test(Backup::class)
         ->call('saveSchedule')
         ->assertForbidden();
 });
 
 test('non-admin cannot delete schedule', function () {
-    Livewire::actingAs(User::factory()->create(['role' => 'member']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Member]))
         ->test(Backup::class)
         ->call('deleteSchedule')
         ->assertForbidden();
@@ -190,7 +191,7 @@ test('admin can run a schedule to trigger backups for all its servers', function
     $server = DatabaseServer::factory()->create(['database_names' => ['app']]);
     $server->backups->first()->update(['backup_schedule_id' => $schedule->id]);
 
-    Livewire::actingAs(User::factory()->create(['role' => 'admin']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Admin]))
         ->test(Backup::class)
         ->call('runSchedule', $schedule->id);
 
@@ -206,7 +207,7 @@ test('running a schedule skips servers with backups disabled', function () {
     $enabledServer->backups->first()->update(['backup_schedule_id' => $schedule->id]);
     $disabledServer->backups->first()->update(['backup_schedule_id' => $schedule->id]);
 
-    Livewire::actingAs(User::factory()->create(['role' => 'admin']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Admin]))
         ->test(Backup::class)
         ->call('runSchedule', $schedule->id);
 
@@ -220,7 +221,7 @@ test('running a schedule skips servers with backups disabled', function () {
 });
 
 test('non-admin cannot run a schedule', function () {
-    Livewire::actingAs(User::factory()->create(['role' => 'member']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Member]))
         ->test(Backup::class)
         ->call('runSchedule', 'fake-id')
         ->assertForbidden();
@@ -229,7 +230,7 @@ test('non-admin cannot run a schedule', function () {
 test('admin can run cleanup manually', function () {
     Queue::fake();
 
-    Livewire::actingAs(User::factory()->create(['role' => 'admin']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Admin]))
         ->test(Backup::class)
         ->call('runCleanup');
 
@@ -237,7 +238,7 @@ test('admin can run cleanup manually', function () {
 });
 
 test('non-admin cannot run cleanup', function () {
-    Livewire::actingAs(User::factory()->create(['role' => 'member']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Member]))
         ->test(Backup::class)
         ->call('runCleanup')
         ->assertForbidden();
@@ -246,7 +247,7 @@ test('non-admin cannot run cleanup', function () {
 test('admin can run verify files manually', function () {
     Queue::fake();
 
-    Livewire::actingAs(User::factory()->create(['role' => 'admin']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Admin]))
         ->test(Backup::class)
         ->call('runVerifyFiles');
 
@@ -254,7 +255,7 @@ test('admin can run verify files manually', function () {
 });
 
 test('non-admin cannot run verify files', function () {
-    Livewire::actingAs(User::factory()->create(['role' => 'member']))
+    Livewire::actingAs(User::factory()->create(['role' => UserRole::Member]))
         ->test(Backup::class)
         ->call('runVerifyFiles')
         ->assertForbidden();

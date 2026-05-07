@@ -7,6 +7,7 @@ use App\Jobs\VerifySnapshotFileJob;
 use App\Livewire\Forms\ConfigurationForm;
 use App\Models\BackupSchedule;
 use App\Services\Backup\TriggerBackupAction;
+use App\Services\CurrentOrganization;
 use App\Traits\Toast;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
@@ -69,7 +70,7 @@ class Backup extends Component
     {
         abort_unless(auth()->user()->isAdmin(), Response::HTTP_FORBIDDEN);
 
-        VerifySnapshotFileJob::dispatch();
+        VerifySnapshotFileJob::dispatch(app(CurrentOrganization::class)->id());
 
         $this->success(__('Snapshot file verification job dispatched.'));
     }
