@@ -17,6 +17,7 @@ use App\Support\FilesystemSupport;
 pest()->extend(Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->beforeEach(function () {
+        $this->withoutVite();
         dailySchedule();
         setupOrgContext();
     })
@@ -25,6 +26,7 @@ pest()->extend(Tests\TestCase::class)
 pest()->extend(Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->beforeEach(function () {
+        $this->withoutVite();
         dailySchedule();
         setupOrgContext();
     })
