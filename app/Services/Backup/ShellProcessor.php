@@ -90,6 +90,8 @@ class ShellProcessor
             '/sshpass\s+-p\s+[\'"]?[^\s\'"]+[\'"]?/' => 'sshpass -p ***',
             // SSH_ASKPASS scripts may contain passphrases
             '/SSH_ASKPASS=[^\s]+/' => 'SSH_ASKPASS=***',
+            // sqlpackage: /SourcePassword:'...' or /TargetPassword:'...' (escapeshellarg single-quotes the value)
+            '#/(Source|Target)Password:(?:\'[^\']*\'|"[^"]*"|[^\s]+)#' => '/$1Password:***',
         ];
 
         foreach ($patterns as $pattern => $replacement) {

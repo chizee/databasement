@@ -16,6 +16,8 @@ test('sanitizes sensitive patterns', function (string $input, string $expectedTo
     '-p shorthand format' => ['mysqldump -psecret123 dbname', '-p***', 'secret123'],
     'PGPASSWORD env var' => ['PGPASSWORD=secret123 pg_dump dbname', 'PGPASSWORD=***', 'secret123'],
     'MYSQL_PWD env var' => ['MYSQL_PWD=secret123 mysqldump failed', 'MYSQL_PWD=***', 'secret123'],
+    'sqlpackage source password' => ["sqlpackage /Action:Export /SourcePassword:'secret123' /SourceDatabaseName:'db'", '/SourcePassword:***', 'secret123'],
+    'sqlpackage target password' => ["sqlpackage /Action:Import /TargetPassword:'secret123' /TargetDatabaseName:'db'", '/TargetPassword:***', 'secret123'],
 ]);
 
 test('preserves non-sensitive patterns', function (string $input, string $expectedToContain) {
