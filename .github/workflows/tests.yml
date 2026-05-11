@@ -12,7 +12,8 @@ permissions:
 jobs:
   ci:
     runs-on: ubuntu-latest
-
+    container:
+      image: davidcrty/databasement-php:latest
 
     services:
       mysql:
@@ -100,32 +101,6 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.5
-          tools: composer:v2
-          coverage: pcov
-          extensions: pdo, pdo_mysql, pdo_pgsql, pdo_sqlsrv, sqlsrv, mongodb-2.3.0, sockets
-
-      - name: Install System Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y mysql-client postgresql-client redis-tools zstd p7zip-full sshpass sqlite3 unzip
-          # Install MongoDB tools (mongodump, mongorestore)
-          wget -qO - https://www.mongodb.org/static/pgp/server-8.0.asc | sudo gpg --dearmor -o /usr/share/keyrings/mongodb-server-8.0.gpg
-          echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
-          sudo apt-get update
-          sudo apt-get install -y mongodb-database-tools
-          # Install sqlpackage (.NET app; runs the actual MSSQL bacpac export).
-          # Refresh from https://aka.ms/sqlpackage-linux when bumping the URL.
-          SQLPACKAGE_URL=https://download.microsoft.com/download/c149d463-e758-4207-bf98-3ee0e2547faa/sqlpackage-linux-x64-en-170.3.93.6.zip
-          wget -qO /tmp/sqlpackage.zip "${SQLPACKAGE_URL}"
-          sudo mkdir -p /opt/sqlpackage
-          sudo unzip -q /tmp/sqlpackage.zip -d /opt/sqlpackage
-          sudo chmod +x /opt/sqlpackage/sqlpackage
-          sudo ln -sf /opt/sqlpackage/sqlpackage /usr/local/bin/sqlpackage
-
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
@@ -151,15 +126,6 @@ jobs:
         run: vendor/bin/phpstan analyse
 
       - name: Run Tests
-        env:
-          MYSQL_CLI_TYPE: mysql
-          DB_HOST: 127.0.0.1
-          TEST_MYSQL_HOST: 127.0.0.1
-          TEST_POSTGRES_HOST: 127.0.0.1
-          TEST_REDIS_HOST: 127.0.0.1
-          TEST_MONGODB_HOST: 127.0.0.1
-          TEST_MSSQL_HOST: 127.0.0.1
-          TEST_SSH_HOST: 127.0.0.1
         run: |
           php artisan migrate --force
           php artisan test --parallel --coverage-clover=coverage.xml --log-junit junit.xml
