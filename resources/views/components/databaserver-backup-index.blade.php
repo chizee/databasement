@@ -29,7 +29,7 @@
     @if($server->backups->count() > 1)
         @can('backup', $server)
             <x-button
-                icon="o-arrow-down-tray"
+                icon="bi.database-fill-up"
                 wire:click="runBackup('{{ $backup->id }}')"
                 spinner
                 tooltip="{{ __('Backup now') }}"

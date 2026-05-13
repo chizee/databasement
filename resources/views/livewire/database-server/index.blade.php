@@ -122,11 +122,11 @@
             @scope('cell_actions', $server)
             <div>
                 @can('backup', $server)
-                    <x-button icon="o-archive-box" wire:click="runBackupAll('{{ $server->id }}')" spinner
+                    <x-button icon="bi.database-fill-up" wire:click="runBackupAll('{{ $server->id }}')" spinner
                               tooltip="{{ __('Backup now') }}" class="btn-ghost btn-sm text-info" />
                 @endcan
                 @can('restore', $server)
-                    <x-button icon="o-arrow-uturn-left" wire:click="confirmRestore('{{ $server->id }}')" spinner
+                    <x-button icon="bi.database-fill-down" wire:click="confirmRestore('{{ $server->id }}')" spinner
                               tooltip="{{ __('Restore') }}" class="btn-ghost btn-sm text-success" />
                 @endcan
             </div>

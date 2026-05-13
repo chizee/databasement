@@ -115,7 +115,7 @@
                     @if($canRestore)
                         @can('restoreFrom', $snapshot)
                             <x-button
-                                icon="o-arrow-uturn-left"
+                                icon="bi.database-fill-down"
                                 wire:click="triggerRestore('{{ $snapshot->id }}')"
                                 :tooltip="__('Restore')"
                                 class="btn-ghost btn-sm text-primary"
