@@ -36,15 +36,29 @@
 
                                 {{-- Server Name (icon visible on desktop only in line 1) --}}
                                 <div class="flex items-center gap-2 flex-1 min-w-0">
-                                    @if($job->snapshot && $job->snapshot->databaseServer)
+                                    @if($job->snapshot)
                                         <x-icon :name="$job->snapshot->database_type->icon()" class="w-4 h-4 shrink-0 hidden sm:block" />
-                                        <span class="truncate text-sm font-medium">{{ $job->snapshot->databaseServer->name }}</span>
+                                        @if($serverId)
+                                            <span class="truncate text-sm font-medium">{{ $job->snapshot->databaseServer->name }}</span>
+                                        @else
+                                            <a href="{{ route('database-servers.show', $job->snapshot->databaseServer) }}" wire:navigate
+                                               class="truncate text-sm font-medium hover:text-primary hover:underline">
+                                                {{ $job->snapshot->databaseServer->name }}
+                                            </a>
+                                        @endif
                                         <span class="text-xs text-base-content/50 truncate hidden sm:inline">{{ $job->snapshot->database_name }}</span>
-                                    @elseif($job->restore && $job->restore->targetServer)
+                                    @elseif($job->restore)
                                         @if($job->restore->snapshot)
                                             <x-icon :name="$job->restore->snapshot->database_type->icon()" class="w-4 h-4 shrink-0 hidden sm:block" />
                                         @endif
-                                        <span class="truncate text-sm font-medium">{{ $job->restore->targetServer->name }}</span>
+                                        @if($serverId)
+                                            <span class="truncate text-sm font-medium">{{ $job->restore->targetServer->name }}</span>
+                                        @else
+                                            <a href="{{ route('database-servers.show', $job->restore->targetServer) }}" wire:navigate
+                                               class="truncate text-sm font-medium hover:text-primary hover:underline">
+                                                {{ $job->restore->targetServer->name }}
+                                            </a>
+                                        @endif
                                         <span class="text-xs text-base-content/50 truncate hidden sm:inline">{{ $job->restore->schema_name }}</span>
                                     @endif
                                 </div>
@@ -68,10 +82,10 @@
 
                             {{-- Line 2 on mobile: DB icon + name + time + logs --}}
                             <div class="flex items-center gap-2 sm:hidden text-base-content/70">
-                                @if($job->snapshot && $job->snapshot->databaseServer)
+                                @if($job->snapshot)
                                     <x-icon :name="$job->snapshot->database_type->icon()" class="w-4 h-4 shrink-0" />
                                     <span class="text-xs truncate flex-1">{{ $job->snapshot->database_name }}</span>
-                                @elseif($job->restore && $job->restore->targetServer)
+                                @elseif($job->restore)
                                     @if($job->restore->snapshot)
                                         <x-icon :name="$job->restore->snapshot->database_type->icon()" class="w-4 h-4 shrink-0" />
                                     @endif
@@ -106,11 +120,11 @@
             {{-- View All Link --}}
             <div class="mt-4 pt-3 border-t border-base-200">
                 <div class="flex flex-wrap items-center gap-3">
-                    <a href="{{ route('snapshots.index') }}" wire:navigate class="text-sm text-primary hover:underline flex items-center gap-1">
+                    <a href="{{ route('snapshots.index', $serverId ? ['serverFilter' => $serverId] : []) }}" wire:navigate class="text-sm text-primary hover:underline flex items-center gap-1">
                         {{ __('View all snapshots') }}
                         <x-icon name="o-arrow-right" class="w-4 h-4" />
                     </a>
-                    <a href="{{ route('restores.index') }}" wire:navigate class="text-sm text-primary hover:underline flex items-center gap-1">
+                    <a href="{{ route('restores.index', $serverId ? ['targetServerFilter' => $serverId] : []) }}" wire:navigate class="text-sm text-primary hover:underline flex items-center gap-1">
                         {{ __('View all restores') }}
                         <x-icon name="o-arrow-right" class="w-4 h-4" />
                     </a>
