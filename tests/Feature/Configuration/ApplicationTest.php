@@ -20,6 +20,6 @@ test('application page displays environment variables', function () {
         ->test(Application::class)
         ->assertSee('Configuration')
         ->assertSee('APP_DEBUG')
-        ->assertSee('TZ')
+        ->assertSee('APP_DISPLAY_TIMEZONE')
         ->assertSee('TRUSTED_PROXIES');
 });

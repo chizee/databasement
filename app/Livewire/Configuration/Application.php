@@ -33,9 +33,9 @@ class Application extends Component
                 'description' => __('Enable debug mode. Should be false in production.'),
             ],
             [
-                'env' => 'TZ',
-                'value' => config('app.timezone') ?: '-',
-                'description' => __('Application timezone for dates and scheduled tasks.'),
+                'env' => 'APP_DISPLAY_TIMEZONE',
+                'value' => config('app.display_timezone') ?: '-',
+                'description' => __('Timezone used for rendering datetimes in the UI and interpreting scheduled task cron expressions. Storage stays in UTC.'),
             ],
             [
                 'env' => 'TRUSTED_PROXIES',
