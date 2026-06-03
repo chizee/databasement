@@ -27,15 +27,19 @@
         : [];
 
     $pathPlaceholder = match ($serverType) {
-        DatabaseType::FIREBIRD => __('e.g., /var/lib/firebird/data/main.fdb'),
+        DatabaseType::FIREBIRD => __('e.g., /var/lib/firebird/data/main.fdb or main.fdb'),
         default => __('e.g., /var/data/database.sqlite'),
     };
 
     $pathHint = match (true) {
-        $serverType === DatabaseType::FIREBIRD => __('Absolute paths to database files on the Firebird server'),
+        $serverType === DatabaseType::FIREBIRD => __("Absolute path on the Firebird server, or an alias defined in the server's databases.conf"),
         $serverType === DatabaseType::SQLITE && $form->ssh_enabled => __('Absolute paths on the remote SSH server'),
         default => __('Absolute paths to SQLite database files'),
     };
+
+    $pathSectionLabel = $serverType === DatabaseType::FIREBIRD
+        ? __('Database paths or aliases')
+        : __('Database file paths');
 @endphp
 
 @php
@@ -81,7 +85,7 @@
                         <x-icon name="o-document" class="w-3.5 h-3.5" />
                     </span>
                     <span class="text-sm font-semibold text-base-content/80 tracking-tight">
-                        {{ __('Database file paths') }}
+                        {{ $pathSectionLabel }}
                     </span>
                 </div>
 
