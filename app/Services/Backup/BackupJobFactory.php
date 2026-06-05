@@ -172,6 +172,7 @@ class BackupJobFactory
         string $schemaName,
         ?int $triggeredByUserId = null,
         array $options = [],
+        ?string $scheduledRestoreId = null,
     ): Restore {
         if ($snapshot->database_type !== $targetServer->database_type) {
             throw ValidationException::withMessages([
@@ -194,6 +195,7 @@ class BackupJobFactory
             'schema_name' => $schemaName,
             'options' => $options ?: null,
             'triggered_by_user_id' => $triggeredByUserId,
+            'scheduled_restore_id' => $scheduledRestoreId,
         ]);
 
         $restore->load(['job', 'snapshot.volume', 'snapshot.databaseServer', 'targetServer']);

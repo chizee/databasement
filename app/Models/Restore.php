@@ -28,6 +28,7 @@ class Restore extends Model
         'schema_name',
         'options',
         'triggered_by_user_id',
+        'scheduled_restore_id',
     ];
 
     /**
@@ -78,5 +79,13 @@ class Restore extends Model
     public function job(): BelongsTo
     {
         return $this->belongsTo(BackupJob::class, 'backup_job_id');
+    }
+
+    /**
+     * @return BelongsTo<ScheduledRestore, Restore>
+     */
+    public function scheduledRestore(): BelongsTo
+    {
+        return $this->belongsTo(ScheduledRestore::class);
     }
 }
