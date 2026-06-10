@@ -4,6 +4,7 @@ namespace App\Livewire\Forms;
 
 use App\Enums\NotificationChannelType;
 use App\Models\NotificationChannel;
+use App\Rules\CommaSeparatedEmails;
 use Illuminate\Validation\Rule;
 use Livewire\Form;
 
@@ -128,7 +129,7 @@ class NotificationChannelForm extends Form
 
         return match ($type) {
             NotificationChannelType::Email => array_merge($rules, [
-                'config_to' => ['required', 'email', 'max:255'],
+                'config_to' => ['required', 'string', 'max:1000', new CommaSeparatedEmails],
             ]),
             NotificationChannelType::Slack => array_merge($rules, [
                 'config_webhook_url' => [($isEdit && $this->has_config_webhook_url) ? 'nullable' : 'required', 'string', 'url', 'max:500'],
