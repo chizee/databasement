@@ -49,24 +49,8 @@
                         </div>
                     </div>
                     {{-- Right: Status + Metadata button --}}
-                    @php
-                        $jobStatus = $this->selectedJob->status;
-                        $jobStatusBadge = match($jobStatus) {
-                            'completed' => ['label' => __('Completed'), 'class' => 'badge-success'],
-                            'failed' => ['label' => __('Failed'), 'class' => 'badge-error'],
-                            'running' => ['label' => __('Running'), 'class' => 'badge-warning'],
-                            default => ['label' => ucfirst($jobStatus), 'class' => 'badge-info'],
-                        };
-                    @endphp
                     <div class="flex items-center gap-2 sm:gap-4">
-                        @if($jobStatus === 'running')
-                            <div class="badge {{ $jobStatusBadge['class'] }} gap-1">
-                                <x-loading class="loading-spinner loading-xs" />
-                                {{ $jobStatusBadge['label'] }}
-                            </div>
-                        @else
-                            <x-badge value="{{ $jobStatusBadge['label'] }}" class="{{ $jobStatusBadge['class'] }}" />
-                        @endif
+                        <x-job-status-indicator :status="$this->selectedJob->status" />
                         @if($snapshot?->metadata)
                             <x-button
                                 :label="__('Metadata')"
