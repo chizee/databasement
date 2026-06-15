@@ -20,6 +20,9 @@
   <a href="https://hub.docker.com/r/davidcrty/databasement">
     <img src="https://img.shields.io/docker/pulls/davidcrty/databasement" alt="Docker Pulls" />
   </a>
+  <a href="https://snyk.io/test/github/David-Crty/databasement">
+    <img src="https://snyk.io/test/github/David-Crty/databasement/badge.svg" alt="Known Vulnerabilities" />
+  </a>
 </p>
 
 <p align="center">
