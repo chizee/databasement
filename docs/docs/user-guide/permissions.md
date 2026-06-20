@@ -1,5 +1,5 @@
 ---
-sidebar_position: 8
+sidebar_position: 9
 ---
 
 # Permissions
@@ -39,6 +39,18 @@ Adminer access is enabled by default for Admins only. A Super Admin can change t
 | Create    |   ❌    |   ✅    |   ✅   |
 | Edit      |   ❌    |   ✅    |   ✅   |
 | Delete    |   ❌    |   ✅    |   ✅   |
+
+### Agents
+
+| Action           | Viewer | Member | Admin |
+|------------------|:------:|:------:|:-----:|
+| View list        |   ✅    |   ✅    |   ✅   |
+| Create           |   ❌    |   ✅    |   ✅   |
+| Edit             |   ❌    |   ✅    |   ✅   |
+| Regenerate token |   ❌    |   ✅    |   ✅   |
+| Delete           |   ❌    |   ✅    |   ✅   |
+
+See [Remote Agents](./agents.md) for how agents back up databases in firewalled or isolated networks.
 
 ### Snapshots
 
