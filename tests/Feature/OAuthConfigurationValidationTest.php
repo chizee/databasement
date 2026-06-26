@@ -10,7 +10,7 @@ test('throws exception for invalid oauth default role', function () {
     $provider = new AppServiceProvider(app());
 
     expect(fn () => $provider->performOAuthValidation())
-        ->toThrow(\InvalidArgumentException::class, "Invalid OAUTH_DEFAULT_ROLE 'invalid_role'. Must be one of: viewer, member, admin");
+        ->toThrow(\InvalidArgumentException::class, "Invalid OAUTH_DEFAULT_ROLE 'invalid_role'. Must be one of: viewer, operator, member, admin");
 });
 
 test('throws exception when enabled provider is missing credentials', function () {
@@ -61,7 +61,7 @@ test('throws exception when strict mode is enabled without any role mappings', f
     $provider = new AppServiceProvider(app());
 
     expect(fn () => $provider->performOAuthValidation())
-        ->toThrow(\InvalidArgumentException::class, 'OAUTH_OIDC_ROLE_STRICT is enabled but no role mappings are configured');
+        ->toThrow(\InvalidArgumentException::class, 'OAUTH_OIDC_ROLE_STRICT is enabled but no role mappings are configured. Set at least one of: OAUTH_OIDC_ROLE_MAP_ADMIN, OAUTH_OIDC_ROLE_MAP_MEMBER, OAUTH_OIDC_ROLE_MAP_OPERATOR, OAUTH_OIDC_ROLE_MAP_VIEWER');
 });
 
 test('does not throw when strict mode is enabled with role mappings', function () {
@@ -76,6 +76,28 @@ test('does not throw when strict mode is enabled with role mappings', function (
         'claim' => 'groups',
         'admin' => 'my-admins',
         'member' => '',
+        'viewer' => '',
+        'strict' => true,
+    ]);
+
+    $provider = new AppServiceProvider(app());
+
+    expect(fn () => $provider->performOAuthValidation())->not->toThrow(\InvalidArgumentException::class);
+});
+
+test('does not throw when strict mode is satisfied by an operator role mapping', function () {
+    Config::set('oauth.default_role', 'member');
+    Config::set('oauth.providers.oidc', [
+        'enabled' => true,
+        'client_id' => 'id',
+        'client_secret' => 'secret',
+        'base_url' => 'https://idp.example.com',
+    ]);
+    Config::set('oauth.role_mapping', [
+        'claim' => 'groups',
+        'admin' => '',
+        'member' => '',
+        'operator' => 'my-operators',
         'viewer' => '',
         'strict' => true,
     ]);
