@@ -26,14 +26,14 @@
     <div x-data="{ expanded: false }" {{ $attributes->merge(['class' => 'flex flex-wrap items-center gap-1']) }}>
         @foreach($names as $index => $name)
             <span @if($index >= $visible) x-show="expanded" x-cloak @endif
-                  class="badge badge-sm badge-ghost">
+                  class="badge badge-sm badge-ghost whitespace-nowrap">
                 {{ Ability::tryFrom($name)?->label() ?? $name }}
             </span>
         @endforeach
 
         @if($names->count() > $visible)
             <button type="button" x-on:click.prevent.stop="expanded = ! expanded"
-                    class="badge badge-sm badge-ghost cursor-pointer hover:bg-base-300">
+                    class="badge badge-sm badge-ghost whitespace-nowrap cursor-pointer hover:bg-base-300">
                 <span x-show="!expanded">+{{ $names->count() - $visible }} {{ __('more') }}</span>
                 <span x-show="expanded" x-cloak>{{ __('Show less') }}</span>
             </button>

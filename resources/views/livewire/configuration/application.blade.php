@@ -30,13 +30,15 @@
                 </x-config-row>
 
                 @if ($form->adminer_enabled)
-                    <x-alert class="alert-info" icon="o-information-circle">
-                        {{ __('Access to the database browser is controlled by the "Use Adminer" ability on each role. Manage it under Roles.') }}
-                    </x-alert>
+                    <div class="space-y-3 py-4">
+                        <x-alert class="alert-info" icon="o-information-circle">
+                            {{ __('Access to the database browser is controlled by the "Use Adminer" ability on each role. Manage it under Roles.') }}
+                        </x-alert>
 
-                    <x-alert class="alert-warning" icon="o-exclamation-triangle">
-                        {{ __('Users will have the same permissions as the database connection user configured on each server. Ensure connection users have appropriate privilege levels.') }}
-                    </x-alert>
+                        <x-alert class="alert-warning" icon="o-exclamation-triangle">
+                            {{ __('Users will have the same permissions as the database connection user configured on each server. Ensure connection users have appropriate privilege levels.') }}
+                        </x-alert>
+                    </div>
                 @endif
             </div>
 

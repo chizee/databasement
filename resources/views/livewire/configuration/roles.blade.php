@@ -14,49 +14,51 @@
     @endcan
 
     <x-card shadow>
-        <table class="table table-default">
-            <thead>
-                <tr>
-                    <th>{{ __('Role') }}</th>
-                    <th>{{ __('Abilities') }}</th>
-                    <th class="text-center w-28">{{ __('Members') }}</th>
-                    <th class="text-right w-28">{{ __('Actions') }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($roles as $role)
-                    <tr wire:key="role-{{ $role->id }}">
-                        <td>
-                            <div class="font-medium">{{ $role->title ?: $role->name }}</div>
-                            <div class="text-sm text-base-content/60 flex items-center gap-1">
-                                <code>{{ $role->name }}</code>
-                                @if($role->built_in)
-                                    <x-badge :value="__('Built-in')" class="badge-ghost badge-xs" />
-                                @endif
-                            </div>
-                        </td>
-                        <td>
-                            <x-ability-badges :abilities="$role->abilities->pluck('name')->all()" />
-                        </td>
-                        <td class="text-center">{{ $memberCounts[$role->id] ?? 0 }}</td>
-                        <td>
-                            <div class="flex gap-2 justify-end">
-                                @can('update', $role)
-                                    <x-button icon="o-pencil" wire:click="openEdit({{ $role->id }})" :tooltip="__('Edit')" class="btn-ghost btn-sm" />
-                                @endcan
-                                @can('delete', $role)
-                                    <x-button icon="o-trash" wire:click="confirmDelete({{ $role->id }})" :tooltip="__('Delete')" class="btn-ghost btn-sm text-error" />
-                                @endcan
-                            </div>
-                        </td>
-                    </tr>
-                @empty
+        <div class="overflow-x-auto">
+            <table class="table table-default">
+                <thead>
                     <tr>
-                        <td colspan="4" class="text-center text-base-content/50 py-8">{{ __('No roles yet.') }}</td>
+                        <th>{{ __('Role') }}</th>
+                        <th>{{ __('Abilities') }}</th>
+                        <th class="text-center w-28">{{ __('Members') }}</th>
+                        <th class="text-right w-28">{{ __('Actions') }}</th>
                     </tr>
-                @endforelse
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @forelse($roles as $role)
+                        <tr wire:key="role-{{ $role->id }}">
+                            <td>
+                                <div class="font-medium">{{ $role->title ?: $role->name }}</div>
+                                <div class="text-sm text-base-content/60 flex items-center gap-1">
+                                    <code>{{ $role->name }}</code>
+                                    @if($role->built_in)
+                                        <x-badge :value="__('Built-in')" class="badge-ghost badge-xs whitespace-nowrap" />
+                                    @endif
+                                </div>
+                            </td>
+                            <td>
+                                <x-ability-badges :abilities="$role->abilities->pluck('name')->all()" />
+                            </td>
+                            <td class="text-center">{{ $memberCounts[$role->id] ?? 0 }}</td>
+                            <td>
+                                <div class="flex gap-2 justify-end">
+                                    @can('update', $role)
+                                        <x-button icon="o-pencil" wire:click="openEdit({{ $role->id }})" :tooltip="__('Edit')" class="btn-ghost btn-sm" />
+                                    @endcan
+                                    @can('delete', $role)
+                                        <x-button icon="o-trash" wire:click="confirmDelete({{ $role->id }})" :tooltip="__('Delete')" class="btn-ghost btn-sm text-error" />
+                                    @endcan
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center text-base-content/50 py-8">{{ __('No roles yet.') }}</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </x-card>
 
     <!-- CREATE / EDIT MODAL -->
